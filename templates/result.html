@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% for song in songs %}
+    <div>
+      <img src="{{ song.image }}">
+      <p>Song: {{ song.song }}</p>
+      <p>Artist: {{ song.singers }}</p>
+      <p>Album: {{ song.album }}</p>
+      <p>Link: {{ song.media_url }}</p>
+    </div>
+  {% endfor %}
+{% endblock %}

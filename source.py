@@ -69,7 +69,7 @@ def format_song(data, lyrics):
     data['starring'] = format(data['starring'])
     data['album'] = format(data['album'])
     data["primary_artists"] = format(data["primary_artists"])
-    data['image'] = data['image'].replace("150x150", "500x500")
+    # data['image'] = data['image'].replace("150x150", "500x500")
 
     if lyrics:
         if data['has_lyrics'] == 'true':
