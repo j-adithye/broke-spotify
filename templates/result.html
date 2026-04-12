@@ -17,13 +17,13 @@
         </form>
     </div>
 
-    <div class="song-grid"
-     data-url="{{ song.media_url }}"
-     data-title="{{ song.song }}"
-     data-artist="{{ song.singers }}"
-     data-image="{{ song.image }}">
+    <div class="song-grid">
         {% for song in songs %}
-        <div class="song-card">
+        <div class="song-card"
+        data-url="{{ song.media_url }}"
+        data-title="{{ song.song }}"
+        data-artist="{{ song.singers }}"
+        data-image="{{ song.image }}">>
             <img src="{{ song.image }}" alt="{{ song.song }}">
             <p class="song-title">{{ song.song }}</p>
         <br/>
