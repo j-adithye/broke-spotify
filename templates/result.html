@@ -1,13 +1,37 @@
 {% extends "base.html" %}
 
 {% block content %}
-  {% for song in songs %}
-    <div>
-      <img src="{{ song.image }}">
-      <p>Song: {{ song.song }}</p>
-      <p>Artist: {{ song.singers }}</p>
-      <p>Album: {{ song.album }}</p>
-      <p>Link: {{ song.media_url }}</p>
+
+<div class="sidebar">
+    <h2>MyMusic</h2>
+    <p>Home</p>
+    <p>Search</p>
+    <p>Library</p>
+</div>
+
+<div class="main">
+    <div class="searchbar">
+        <form action="/result/" method="GET">
+            <input type="text" name="query" placeholder="Search songs...">
+            <button type="submit">Search</button>
+        </form>
     </div>
-  {% endfor %}
+
+    <div class="song-grid"
+     data-url="{{ song.media_url }}"
+     data-title="{{ song.song }}"
+     data-artist="{{ song.singers }}"
+     data-image="{{ song.image }}">
+        {% for song in songs %}
+        <div class="song-card">
+            <img src="{{ song.image }}" alt="{{ song.song }}">
+            <p class="song-title">{{ song.song }}</p>
+        <br/>
+            <p class="song-artist">{{ song.singers }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
 {% endblock %}
