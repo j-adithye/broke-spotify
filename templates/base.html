@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    
+<button class="hamburger" id="hamburger">&#9776;</button>
+
+<div class="sidebar" id="sidebar">
+    <h2>MyMusic</h2>
+    <p>Home</p>
+    <p>Search</p>
+    <p>Library</p>
+</div>
+
     <div class="player-bar">
     <div class="player-info">
         <img id="player-image" src="" alt="">
@@ -17,10 +27,12 @@
     </div>
 
     <div class="player-controls">
-        <button id="play-pause-btn">Play</button>
-        <input type="range" id="seek-bar" value="0" min="0" max="100">
-        <span id="current-time">0:00</span> / <span id="duration">0:00</span>
-    </div>
+    <button id="prev-btn">&#9664;&#9664;</button>
+    <button id="play-pause-btn">&#9654;</button>
+    <button id="next-btn">&#9654;&#9654;</button>
+    <input type="range" id="seek-bar" value="0" min="0" max="100">
+    <span id="current-time">0:00</span> / <span id="duration">0:00</span>
+</div>
 </div>
 
 <audio id="audio-player"></audio>

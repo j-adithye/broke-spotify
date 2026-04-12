@@ -28,7 +28,7 @@ document.querySelectorAll('.song-card').forEach(function(card) {
         playerTitle.textContent = title;
         playerArtist.textContent = artist;
         playerImage.src = image;
-        playPauseBtn.textContent = 'Pause';
+        playPauseBtn.innerHTML = '&#9646;&#9646;'; 
     });
 });
 
@@ -36,10 +36,10 @@ document.querySelectorAll('.song-card').forEach(function(card) {
 playPauseBtn.addEventListener('click', function() {
     if (audioPlayer.paused) {
         audioPlayer.play();
-        playPauseBtn.textContent = 'Pause';
+        playPauseBtn.innerHTML = '&#9646;&#9646;';
     } else {
         audioPlayer.pause();
-        playPauseBtn.textContent = 'Play';
+        playPauseBtn.innerHTML = '&#9654;';          
     }
 });
 
@@ -69,3 +69,13 @@ seekBar.addEventListener('input', function() {
     audioPlayer.currentTime = seekTo;
 });
 
+// hamburger
+
+const hamburger = document.getElementById('hamburger');
+const sidebar = document.getElementById('sidebar');
+const main = document.getElementById('main');
+
+hamburger.addEventListener('click', function() {
+    sidebar.classList.toggle('hidden');
+    main.classList.toggle('expanded');
+});
