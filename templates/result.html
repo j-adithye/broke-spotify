@@ -2,20 +2,7 @@
 
 {% block content %}
 
-<div class="sidebar">
-    <h2>MyMusic</h2>
-    <p>Home</p>
-    <p>Search</p>
-    <p>Library</p>
-</div>
 
-<div class="main">
-    <div class="searchbar">
-        <form action="/result/" method="GET">
-            <input type="text" name="query" placeholder="Search songs...">
-            <button type="submit">Search</button>
-        </form>
-    </div>
 
     <div class="song-grid">
         {% for song in songs %}
@@ -31,7 +18,5 @@
         </div>
         {% endfor %}
     </div>
-
-</div>
 
 {% endblock %}

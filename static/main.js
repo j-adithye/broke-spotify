@@ -73,9 +73,9 @@ seekBar.addEventListener('input', function() {
 
 const hamburger = document.getElementById('hamburger');
 const sidebar = document.getElementById('sidebar');
-const main = document.getElementById('main');
+const songgrid = document.querySelector('.song-grid');
 
 hamburger.addEventListener('click', function() {
-    sidebar.classList.toggle('hidden');
-    main.classList.toggle('expanded');
+    sidebar.classList.toggle('expanded');
+    songgrid.classList.toggle('resize');
 });
