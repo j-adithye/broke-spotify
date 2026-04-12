@@ -2,9 +2,20 @@
 {% block title %}THis is homepage{% endblock %}
 {% block content %}
 
-<form method="POST">
-  <input id="query" name="q" placeholder="Search..." >
-  <button type="submit">Search</button>
-</form>
+<div class="sidebar">
+    <h2>MyMusic</h2>
+    <p>Home</p>
+    <p>Search</p>
+    <p>Library</p>
+</div>
+
+<div class="main">
+  <div class="search-bar">
+    <form action="/result/" method="GET">
+      <input type="text" id="query" name="query" placeholder="Search..." required>
+      <button type="submit">Search</button>
+    </form>
+  </div>
+</div>
 
 {% endblock %}
