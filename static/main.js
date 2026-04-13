@@ -29,6 +29,16 @@ document.querySelectorAll('.song-card').forEach(function(card) {
         playerArtist.textContent = artist;
         playerImage.src = image;
         playPauseBtn.innerHTML = '&#9646;&#9646;'; 
+
+        //send title and artist of now playing song to flask :)
+        fetch('/now-playing', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                song: title,
+                artist: artist
+            })
+        });
     });
 });
 

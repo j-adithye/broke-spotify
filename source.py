@@ -4,34 +4,30 @@ from pyDes import *
 import base64
 
 
-def search_for_song(query, lyrics, songdata):
-    if query.startswith('http') and 'saavn.com' in query:
-        id = get_song_id(query)
-        return get_song(id, lyrics)
-
+def search_for_song(query):
     search_base_url = endpoints.search_base_url+query
     response = requests.get(search_base_url).text.encode().decode('unicode-escape')
     pattern = r'\(From "([^"]+)"\)'
     response = json.loads(re.sub(pattern, r"(From '\1')", response))
-    song_response = response['songs']['data']
-    if not songdata:
-        return song_response
+    if 'results' not in response.keys():
+        return None
+    song_response = response['results']
     songs = []
     for song in song_response:
         id = song['id']
-        song_data = get_song(id, lyrics)
+        song_data = get_song(id)
         if song_data:
             songs.append(song_data)
     return songs
 
 
-def get_song(id, lyrics):
+def get_song(id):
     try:
         song_details_base_url = endpoints.song_details_base_url+id
         song_response = requests.get(
             song_details_base_url).text.encode().decode('unicode-escape')
         song_response = json.loads(song_response)
-        song_data = format_song(song_response[id], lyrics)
+        song_data = format_song(song_response[id])
         if song_data:
             return song_data
     except:
@@ -46,7 +42,7 @@ def get_song_id(url):
         return res.text.split('"song":{"type":"')[1].split('","image":')[0].split('"id":"')[-1]
 
 
-def format_song(data, lyrics):
+def format_song(data):
     try:
         data['media_url'] = decrypt_url(data['encrypted_media_url'])
         if data['320kbps'] != "true":
@@ -69,13 +65,7 @@ def format_song(data, lyrics):
     data['starring'] = format(data['starring'])
     data['album'] = format(data['album'])
     data["primary_artists"] = format(data["primary_artists"])
-    # data['image'] = data['image'].replace("150x150", "500x500")
-
-    if lyrics:
-        if data['has_lyrics'] == 'true':
-            data['lyrics'] = get_lyrics(data['id'])
-        else:
-            data['lyrics'] = None
+    data['image'] = data['image'].replace("150x150", "500x500")
 
     try:
         data['copyright_text'] = data['copyright_text'].replace("&copy;", "©")
