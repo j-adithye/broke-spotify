@@ -1,22 +1,47 @@
 {% extends "base.html" %}
+{% block title %}Search Results — Swave{% endblock %}
+{% block nav_search %}active{% endblock %}
 
 {% block content %}
+<div class="results-header">
+    <p class="results-eyebrow">Search Results</p>
+    <h2 class="results-title">
+        {% if songs %}
+            {{ songs|length }} track{% if songs|length != 1 %}s{% endif %} found
+        {% else %}
+            No results found
+        {% endif %}
+    </h2>
+</div>
 
-
-
-    <div class="song-grid">
-        {% for song in songs %}
-        <div class="song-card"
+{% if songs %}
+<div class="song-grid" id="song-grid">
+    {% for song in songs %}
+    <div class="song-card"
         data-url="{{ song.media_url }}"
         data-title="{{ song.song }}"
         data-artist="{{ song.singers }}"
         data-image="{{ song.image }}">
-            <img src="{{ song.image }}" alt="{{ song.song }}">
-            <p class="song-title">{{ song.song }}</p>
-        <br/>
-            <p class="song-artist">{{ song.singers }}</p>
+        <div class="song-card-img-wrap">
+            <img src="{{ song.image }}" alt="{{ song.song }}" loading="lazy">
+            <div class="song-card-overlay">
+                <div class="song-play-btn">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+            </div>
         </div>
-        {% endfor %}
+        <p class="song-title">{{ song.song }}</p>
+        <p class="song-artist">{{ song.singers }}</p>
     </div>
-
+    {% endfor %}
+</div>
+{% else %}
+<div class="no-results">
+    <div class="no-results-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+    </div>
+    <p class="no-results-text">No songs matched your search.</p>
+    <p class="no-results-hint">Try a different keyword or artist name.</p>
+</div>
+{% endif %}
 {% endblock %}

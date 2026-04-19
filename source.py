@@ -3,10 +3,16 @@ import requests,json,re
 from pyDes import *
 import base64
 
+import requests
+
+headers = {
+    "User-Agent": "Mozilla/5.0",
+    "Accept": "application/json"
+}
 
 def search_for_song(query):
     search_base_url = endpoints.search_base_url+query
-    response = requests.get(search_base_url).text.encode().decode('unicode-escape')
+    response = requests.get(search_base_url, headers= headers).text.encode().decode('unicode-escape')
     pattern = r'\(From "([^"]+)"\)'
     response = json.loads(re.sub(pattern, r"(From '\1')", response))
     if 'results' not in response.keys():

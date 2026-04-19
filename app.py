@@ -1,9 +1,14 @@
-from flask import Flask,request,jsonify,render_template,redirect,url_for
+from flask import Flask,request,render_template,session
 import source
 import recommendtion
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 
 app = Flask(__name__)
+app.secret_key = os.getenv('secret')
+
 
 @app.route("/",methods= ['GET','POST'])
 def home():
@@ -11,7 +16,6 @@ def home():
 
 @app.route("/result/")
 def result():
-    lyrics = False
     query = request.args.get('query')
     songs = source.search_for_song(query)
     if not songs:
@@ -22,10 +26,17 @@ def result():
 @app.route("/now-playing",methods = ["POST"])
 def now_playing():
     data = request.get_json()
-    song = data['song']
-    artist = data['artist']
-    recommendtion.get_similar(song,artist)
+    session['songs'] = recommendtion.get_similar(data['song'],data['artist'])
+    session['url_queue'] = recommendtion.get_urls(session['songs'])
     return "", 204
     
+@app.route('/test')
+def test():
+    return session['song']
+    
 if __name__ == "__main__":
-    app.run(debug = True)
+    try:
+        app.run(debug = True)
+    except Exception as e:
+        print(e)
+        
