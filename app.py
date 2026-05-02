@@ -1,9 +1,14 @@
 from flask import Flask,request,jsonify,render_template,redirect,url_for
 import new_source
 import recommendtion
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 
 app = Flask(__name__)
+app.secret_key = os.getenv('secret')
+
 
 @app.route("/",methods= ['GET','POST'])
 def home():
@@ -11,7 +16,6 @@ def home():
 
 @app.route("/result/")
 def result():
-    lyrics = False
     query = request.args.get('query')
     songs = new_source.get_search_result(query)
     if not songs:
@@ -26,5 +30,13 @@ def now_playing():
     new_source.get_similar(videoId)
     return "", 204
     
+@app.route('/test')
+def test():
+    return session['song']
+    
 if __name__ == "__main__":
-    app.run(debug = True)
+    try:
+        app.run(debug = True)
+    except Exception as e:
+        print(e)
+        
