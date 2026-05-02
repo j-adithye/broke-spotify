@@ -19,6 +19,7 @@ document.querySelectorAll('.song-card').forEach(function(card) {
         const title = card.dataset.title;
         const artist = card.dataset.artist;
         const image = card.dataset.image;
+        const videoId = card.dataset.videoId;
 
         // Load into audio player
         audioPlayer.src = url;
@@ -35,8 +36,7 @@ document.querySelectorAll('.song-card').forEach(function(card) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                song: title,
-                artist: artist
+                id: videoId
             })
         });
     });
