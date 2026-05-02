@@ -1,5 +1,5 @@
 from flask import Flask,request,jsonify,render_template,redirect,url_for
-import new_source
+import source
 from dotenv import load_dotenv
 import os
 load_dotenv()
@@ -16,7 +16,7 @@ def home():
 @app.route("/result/")
 def result():
     query = request.args.get('query')
-    songs = new_source.get_search_result(query)
+    songs = source.get_search_result(query)
     if not songs:
         return "Error please search again"
     # return songs
@@ -26,7 +26,7 @@ def result():
 def now_playing():
     data = request.get_json()
     videoId = data['videoId']
-    new_source.get_similar(videoId)
+    source.get_similar(videoId)
     return "", 204
     
 @app.route('/test')
