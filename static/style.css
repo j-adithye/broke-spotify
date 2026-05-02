@@ -72,7 +72,7 @@ button {
 }
 
 .song-grid {
-    margin-left: 150px;
+    margin-left: 50px;
     display: flex;
     flex-wrap: wrap;
     gap: 25px;
@@ -88,10 +88,9 @@ button {
 }
 
 .song-card {
-    width: 150px;
-    height: 200px;
+    width: 180px;
     background: #e75858;
-    padding: 10px;
+    padding: 15px;
     border-radius: 8px;
     cursor: pointer;
 }

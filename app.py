@@ -1,6 +1,5 @@
 from flask import Flask,request,jsonify,render_template,redirect,url_for
 import new_source
-import recommendtion
 from dotenv import load_dotenv
 import os
 load_dotenv()
@@ -20,7 +19,7 @@ def result():
     songs = new_source.get_search_result(query)
     if not songs:
         return "Error please search again"
-    return songs
+    # return songs
     return render_template("result.html", songs=songs)
 
 @app.route("/now-playing",methods = ["POST"])
