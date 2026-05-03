@@ -15,6 +15,7 @@ def get_search_result(query):
             singers = singers+singer['name']+','
         song['singers'] = singers[:-1]
         song['image'] = song['thumbnails'][1]['url']
+        song['media_url'] = get_url('song.videoId')
         # print(result[0]['videoId'])
     return result
     
@@ -36,4 +37,3 @@ def get_similar(video_id):
     recommendations = playlist["tracks"][1:10]
     return recommendations
 
-get_url('a')

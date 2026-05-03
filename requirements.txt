@@ -1,4 +1,5 @@
 flask
 requests
-pyDes
+ytmusicapi
+yt-dlp
 gunicorn

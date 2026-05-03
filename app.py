@@ -29,10 +29,6 @@ def now_playing():
     source.get_similar(videoId)
     return "", 204
     
-@app.route('/test')
-def test():
-    return session['song']
-    
 if __name__ == "__main__":
     try:
         app.run(debug = True)
