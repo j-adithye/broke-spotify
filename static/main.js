@@ -12,33 +12,30 @@ const playerImage = document.getElementById('player-image');
 
 // Step B — Detect clicks on any song card
 document.querySelectorAll('.song-card').forEach(function(card) {
-    card.addEventListener('click', function() {
+    card.addEventListener('click', async function() {
 
         // Read the data- attributes we stored on the card
-        const url = card.dataset.url;
         const title = card.dataset.title;
         const artist = card.dataset.artist;
         const image = card.dataset.image;
-        const videoId = card.dataset.videoId;
-
-        // Load into audio player
-        audioPlayer.src = url;
-        audioPlayer.play();
-
+        const videoId = card.dataset.videoid;
+        
+        
         // Update the player bar UI
         playerTitle.textContent = title;
         playerArtist.textContent = artist;
         playerImage.src = image;
         playPauseBtn.innerHTML = '&#9646;&#9646;'; 
 
-        //send title and artist of now playing song to flask :)
-        fetch('/now-playing', {
+        const res = await fetch('/now-playing', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                id: videoId
-            })
+            body: JSON.stringify({ id: videoId })
         });
+        const { url } = await res.json();
+        audioPlayer.src = url;
+    audioPlayer.load();
+    audioPlayer.oncanplay = () => audioPlayer.play();
     });
 });
 

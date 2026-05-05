@@ -16,12 +16,12 @@
 
 <div class="song-grid" id="song-grid">
     {% for song in songs %}
+    <!-- data-url="{{ song.media_url }}" -->
     <div class="song-card"
-        data-url="{{ song.media_url }}"
         data-title="{{ song.title }}"
         data-artist="{{ song.singers }}"
-        data-image="{{ song.thumbnails }}"
-        data-videoId="{{song.videoId}}">
+        data-image="{{ song.image }}"
+        data-videoid="{{ song.videoId }}">
 
             <img src="{{ song.image }}" alt="{{ song.title }}">
             <p class="song-title">{{ song.title }}</p>

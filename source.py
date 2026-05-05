@@ -15,7 +15,9 @@ def get_search_result(query):
             singers = singers+singer['name']+','
         song['singers'] = singers[:-1]
         song['image'] = song['thumbnails'][1]['url']
-        song['media_url'] = get_url('song.videoId')
+        videoId = song['videoId']
+        # song['media_url'] = get_url(videoId) #req exceed so i have to get link on demand
+        # print(song['media_url'])
         # print(result[0]['videoId'])
     return result
     
