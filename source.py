@@ -2,25 +2,35 @@ from ytmusicapi import YTMusic
 import json
 import yt_dlp
 
-
 yt = YTMusic()
 
 
 def get_search_result(query):
-    result = yt.search(query,filter='songs')
-    # print(json.dumps(result,indent=4))
-    for song in result:
+    res = yt.search(query,filter='songs')
+    result = data_helper(res)
+    
+    return result
+    
+def data_helper(res,thumbnail='thumbnails',search=True):
+    for song in res:
         singers = ''
         for singer in song['artists']:
             singers = singers+singer['name']+','
         song['singers'] = singers[:-1]
-        song['image'] = song['thumbnails'][1]['url']
-        videoId = song['videoId']
-        # song['media_url'] = get_url(videoId) #req exceed so i have to get link on demand
-        # print(song['media_url'])
-        # print(result[0]['videoId'])
-    return result
-    
+        song['image'] = song[thumbnail][1]['url']
+        if search:
+            keys_to_remove = [thumbnail,'artists','views','category','resultType','album','inLibrary',
+                              'pinnedToListenAgain','videoType','duration','year','duration_seconds','isExplicit']
+            for key in keys_to_remove:
+                song.pop(key, None)
+        else:
+            keys_to_remove = [thumbnail,'artists','likeStatus','videoType','inLibrary','feedbackTokens',
+                              'pinnedToListenAgain','listenAgainFeedbackTokens','album','year','length']
+            for key in keys_to_remove:
+                song.pop(key, None)
+            
+    return res
+ 
 def get_url(videoId):
     url = "https://www.youtube.com/watch?v="+str(videoId)
     
@@ -36,6 +46,10 @@ def get_url(videoId):
         
 def get_similar(video_id):
     playlist = yt.get_watch_playlist(videoId=video_id)
-    recommendations = playlist["tracks"][1:10]
-    return recommendations
+    recommendations = playlist["tracks"][1:25]
+    queue = data_helper(recommendations,thumbnail = 'thumbnail',search=False)
+    
+    return queue
 
+# get_similar('kIft-LUHHVA')
+get_url('kIft-LUHHVA')

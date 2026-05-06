@@ -20,20 +20,18 @@ def result():
     songs = source.get_search_result(query)
     if not songs:
         return "Error please search again"
-    # return songs
     return render_template("result.html", songs=songs)
 
 @app.route("/now-playing",methods = ["POST"])
 def now_playing():
     data = request.get_json()
-    videoId = data['id']
-    # source.get_similar(videoId)
-    return jsonify({"url": f"/stream/{videoId}"})
+    
+    return jsonify({"url": f"/stream/{data['id']}"})
     
 @app.route("/stream/<video_id>")
 def stream(video_id):
     media_url = source.get_url(video_id)
-    
+
     range_header = request.headers.get('Range')
     
     headers = {
