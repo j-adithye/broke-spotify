@@ -1,14 +1,8 @@
 from flask import Flask,request,jsonify,render_template,redirect,url_for,Response
 import source
-from dotenv import load_dotenv
 import requests
-import os
-load_dotenv()
-
 
 app = Flask(__name__)
-app.secret_key = os.getenv('secret')
-
 
 @app.route("/",methods= ['GET','POST'])
 def home():
