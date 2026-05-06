@@ -32,16 +32,34 @@ def now_playing():
     
 @app.route("/stream/<video_id>")
 def stream(video_id):
-    # get the media_url for this video_id
     media_url = source.get_url(video_id)
     
-    req = requests.get(media_url, stream=True, headers={
-        "User-Agent": "Mozilla/5.0"
-    })
+    range_header = request.headers.get('Range')
+    
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+    }
+    if range_header:
+        headers['Range'] = range_header
+    
+    req = requests.get(media_url, stream=True, headers=headers)
+    
+    response_headers = {
+        'Accept-Ranges': 'bytes',
+        'Content-Type': req.headers.get('Content-Type', 'audio/webm'),
+    }
+    
+    if 'Content-Range' in req.headers:
+        response_headers['Content-Range'] = req.headers['Content-Range']
+    if 'Content-Length' in req.headers:
+        response_headers['Content-Length'] = req.headers['Content-Length']
+    
+    status = 206 if range_header else 200
     
     return Response(
         req.iter_content(chunk_size=4096),
-        content_type=req.headers['Content-Type']
+        status=status,
+        headers=response_headers
     )
     
     
