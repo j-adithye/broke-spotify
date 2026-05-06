@@ -1,6 +1,7 @@
 from flask import Flask,request,jsonify,render_template,redirect,url_for,Response
 import source
-import requests
+import requests,json
+from threading import Thread
 
 app = Flask(__name__)
 
@@ -19,13 +20,16 @@ def result():
 @app.route("/now-playing",methods = ["POST"])
 def now_playing():
     data = request.get_json()
+    video_id = data['id']
+    global queue
+    queue = source.get_similar(video_id)
     
-    return jsonify({"url": f"/stream/{data['id']}"})
+    return jsonify({"url": f"/stream/{video_id}"})
     
 @app.route("/stream/<video_id>")
 def stream(video_id):
     media_url = source.get_url(video_id)
-
+    print(json.dumps(queue,indent=3))
     range_header = request.headers.get('Range')
     
     headers = {

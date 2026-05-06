@@ -7,8 +7,7 @@ yt = YTMusic()
 
 def get_search_result(query):
     res = yt.search(query,filter='songs')
-    result = data_helper(res)
-    
+    result = data_helper(res)    
     return result
     
 def data_helper(res,thumbnail='thumbnails',search=True):
@@ -48,8 +47,7 @@ def get_similar(video_id):
     playlist = yt.get_watch_playlist(videoId=video_id)
     recommendations = playlist["tracks"][1:25]
     queue = data_helper(recommendations,thumbnail = 'thumbnail',search=False)
-    
     return queue
 
 # get_similar('kIft-LUHHVA')
-get_url('kIft-LUHHVA')
+# get_url('kIft-LUHHVA')
