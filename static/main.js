@@ -26,7 +26,7 @@ async function playSong(videoId, title, artist, image, source= 'queue') {
     const res = await fetch('/now-playing', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: videoId, source: source })
+        body: JSON.stringify({ source: source, id: videoId, title: title, artist:artist, image:image})
     });
     const { url } = await res.json();
     audioPlayer.src = url;

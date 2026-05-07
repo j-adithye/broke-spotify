@@ -13,21 +13,28 @@ def home():
 @app.route("/result/")
 def result():
     query = request.args.get('query')
+    if not query:
+        songs = source.get_search_result('never gonna give you up')
+        return render_template("result.html", songs=songs)
     songs = source.get_search_result(query)
-    if not songs:
-        return "Error please search again"
+    
     return render_template("result.html", songs=songs)
 
 @app.route("/now-playing",methods = ["POST"])
 def now_playing():
     data = request.get_json()
-    video_id = data['id']
     req_source = data['source']
+    video_id,cur_title,cur_artist,cur_image = data['id'],data['title'],data['artist'],data['image']
+    song_details = {"videoId": video_id,
+                    "title": cur_title,
+                    "singers": cur_artist,
+                    "image": cur_image}
     if req_source == 'card':
         queue['tracks'].clear()
         queue['cur_idx'] = 0
+        queue['tracks'].append(song_details)
         tracks = source.get_similar(video_id)
-        queue['tracks'] = tracks
+        queue['tracks'].extend(tracks)
     # print(json.dumps(queue,indent=3))
     return jsonify({"url": f"/stream/{video_id}"})
     
@@ -69,8 +76,8 @@ def next_track():
     idx = queue['cur_idx']
     tracks = queue['tracks']
 
-    current = tracks[idx]
     queue['cur_idx'] += 1
+    current = tracks[queue['cur_idx']]
     
     if idx > 10:
         queue['tracks'].pop(0)
@@ -87,8 +94,8 @@ def prev_track():
     tracks = queue['tracks']
     if queue['cur_idx'] > 0:
         queue['cur_idx'] -= 1
-        current = tracks[queue['cur_idx']]
-
+    current = tracks[queue['cur_idx']]
+    
     return jsonify(current)
 
 if __name__ == "__main__":
