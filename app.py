@@ -22,9 +22,12 @@ def result():
 def now_playing():
     data = request.get_json()
     video_id = data['id']
-    global queue
-    tracks = source.get_similar(video_id)
-    queue['tracks'] = tracks
+    req_source = data['source']
+    if req_source == 'card':
+        queue['tracks'].clear()
+        queue['cur_idx'] = 0
+        tracks = source.get_similar(video_id)
+        queue['tracks'] = tracks
     # print(json.dumps(queue,indent=3))
     return jsonify({"url": f"/stream/{video_id}"})
     
@@ -34,18 +37,14 @@ def stream(video_id):
     # print(json.dumps(queue,indent=3))
     range_header = request.headers.get('Range')
     
-    headers = {
-        "User-Agent": "Mozilla/5.0",
-    }
+    headers = {"User-Agent": "Mozilla/5.0",}
     if range_header:
         headers['Range'] = range_header
     
     req = requests.get(media_url, stream=True, headers=headers)
     
-    response_headers = {
-        'Accept-Ranges': 'bytes',
-        'Content-Type': req.headers.get('Content-Type', 'audio/webm'),
-    }
+    response_headers = {'Accept-Ranges': 'bytes',
+                        'Content-Type': req.headers.get('Content-Type', 'audio/webm'),}
     
     if 'Content-Range' in req.headers:
         response_headers['Content-Range'] = req.headers['Content-Range']
@@ -59,9 +58,14 @@ def stream(video_id):
         status=status,
         headers=response_headers
     )
-    
+
+@app.route('/queue', methods=['GET'])
+def get_queue():
+    return jsonify(queue)
+ 
 @app.route('/queue/next', methods=['GET'])
 def next_track():
+    print(json.dumps(queue,indent=3))
     idx = queue['cur_idx']
     tracks = queue['tracks']
 
@@ -73,18 +77,17 @@ def next_track():
         queue['cur_idx'] -= 1
     
     if len(queue['tracks']) < 5:
-        new_recs = source.get_recommendations(current['videoId'])
+        new_recs = source.get_similar(current['videoId'])
         queue['tracks'].extend(new_recs)
         
     return jsonify(current)
 
 @app.route('/queue/prev', methods=['GET'])
 def prev_track():
-    idx = queue['cur_idx']
     tracks = queue['tracks']
-    if idx > 0:
+    if queue['cur_idx'] > 0:
         queue['cur_idx'] -= 1
-        current = tracks[idx-1]
+        current = tracks[queue['cur_idx']]
 
     return jsonify(current)
 

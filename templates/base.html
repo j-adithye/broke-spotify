@@ -38,9 +38,18 @@
     <button id="prev-btn">&#9664;&#9664;</button>
     <button id="play-pause-btn">&#9654;</button>
     <button id="next-btn">&#9654;&#9654;</button>
+    <button id="queue-btn">&#9776;</button>
     <input type="range" id="seek-bar" value="0" min="0" max="100">
     <span id="current-time">0:00</span> / <span id="duration">0:00</span>
 </div>
+</div>
+
+<div id="queue-modal" class="queue-modal hidden">
+    <div class="queue-header">
+        <h3>Queue</h3>
+        <button id="close-queue-btn">&times;</button>
+    </div>
+    <div id="queue-list"></div>
 </div>
 
 <audio id="audio-player"></audio>

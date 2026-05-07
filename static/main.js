@@ -9,33 +9,36 @@ const durationEl = document.getElementById('duration');
 const playerTitle = document.getElementById('player-title');
 const playerArtist = document.getElementById('player-artist');
 const playerImage = document.getElementById('player-image');
+const nextBtn = document.getElementById('next-btn');
+const prevBtn = document.getElementById('prev-btn');
+const queueBtn = document.getElementById('queue-btn');
+const closeQueueBtn = document.getElementById('close-queue-btn');
+const queueModal = document.getElementById('queue-modal');
+const queueList = document.getElementById('queue-list');
+
+
+async function playSong(videoId, title, artist, image, source= 'queue') {
+    playerTitle.textContent = title;
+    playerArtist.textContent = artist;
+    playerImage.src = image;
+    playPauseBtn.innerHTML = '&#9646;&#9646;';
+
+    const res = await fetch('/now-playing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: videoId, source: source })
+    });
+    const { url } = await res.json();
+    audioPlayer.src = url;
+    audioPlayer.load();
+    audioPlayer.oncanplay = () => audioPlayer.play();
+}
 
 // Step B — Detect clicks on any song card
 document.querySelectorAll('.song-card').forEach(function(card) {
     card.addEventListener('click', async function() {
-
-        // Read the data- attributes we stored on the card
-        const title = card.dataset.title;
-        const artist = card.dataset.artist;
-        const image = card.dataset.image;
-        const videoId = card.dataset.videoid;
-        
-        
-        // Update the player bar UI
-        playerTitle.textContent = title;
-        playerArtist.textContent = artist;
-        playerImage.src = image;
-        playPauseBtn.innerHTML = '&#9646;&#9646;'; 
-
-        const res = await fetch('/now-playing', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: videoId })
-        });
-        const { url } = await res.json();
-        audioPlayer.src = url;
-    audioPlayer.load();
-    audioPlayer.oncanplay = () => audioPlayer.play();
+    const { title, artist, image, videoid } = card.dataset;
+    await playSong(videoid, title, artist, image, 'card');
     });
 });
 
@@ -49,6 +52,7 @@ playPauseBtn.addEventListener('click', function() {
         playPauseBtn.innerHTML = '&#9654;';          
     }
 });
+
 
 // Step D — Update seek bar and time as song plays
 audioPlayer.addEventListener('timeupdate', function() {
@@ -76,6 +80,24 @@ seekBar.addEventListener('input', function() {
     audioPlayer.currentTime = seekTo;
 });
 
+// When song ends, auto fetch next from queue
+audioPlayer.addEventListener('ended', async function() {
+    const res = await fetch('/queue/next');
+    const song = await res.json();
+    await playSong(song.videoId, song.title, song.singers, song.image);
+});
+
+nextBtn.addEventListener('click', async function() {
+    const res = await fetch('/queue/next');
+    const song = await res.json();
+    await playSong(song.videoId, song.title, song.singers, song.image);
+});
+
+prevBtn.addEventListener('click', async function() {
+    const res = await fetch('/queue/prev');
+    const song = await res.json();
+    await playSong(song.videoId, song.title, song.singers, song.image);
+});
 // hamburger
 
 const hamburger = document.getElementById('hamburger');
@@ -86,3 +108,40 @@ hamburger.addEventListener('click', function() {
     sidebar.classList.toggle('expanded');
     songgrid.classList.toggle('resize');
 });
+
+// Open/close queue modal
+queueBtn.addEventListener('click', async function() {
+    queueModal.classList.toggle('hidden');
+    if (!queueModal.classList.contains('hidden')) {
+        await refreshQueue();
+    }
+});
+
+closeQueueBtn.addEventListener('click', function() {
+    queueModal.classList.add('hidden');
+});
+
+async function refreshQueue() {
+    const res = await fetch('/queue');
+    const data = await res.json();  // { tracks: [...], cur_idx: N }
+
+    queueList.innerHTML = '';
+
+    data.tracks.forEach(function(song, i) {
+        const item = document.createElement('div');
+        item.className = 'queue-item' + (i === data.cur_idx ? ' now-playing' : '');
+        item.innerHTML = `
+            <img src="${song.image}" alt="${song.title}">
+            <div class="queue-item-info">
+                <p class="queue-item-title">${song.title}</p>
+                <p class="queue-item-artist">${song.singers}</p>
+            </div>
+            ${i === data.cur_idx ? '<span style="color:#e75858;font-size:11px;">▶ Now</span>' : ''}
+        `;
+        queueList.appendChild(item);
+    });
+
+    // scroll currently playing into view
+    const nowPlaying = queueList.querySelector('.now-playing');
+    if (nowPlaying) nowPlaying.scrollIntoView({ block: 'center' });
+}
