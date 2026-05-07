@@ -3,8 +3,13 @@ import source
 import requests,json,time
 from threading import Thread
 
-app = Flask(__name__)
 queue = {"tracks": [], "cur_idx": 0}
+
+def fetch_and_queue(video_id):
+    tracks = source.get_similar(video_id)
+    queue['tracks'].extend(tracks)
+
+app = Flask(__name__)
 
 @app.route("/",methods= ['GET','POST'])
 def home():
@@ -33,9 +38,7 @@ def now_playing():
         queue['tracks'].clear()
         queue['cur_idx'] = 0
         queue['tracks'].append(song_details)
-        tracks = source.get_similar(video_id)
-        queue['tracks'].extend(tracks)
-    # print(json.dumps(queue,indent=3))
+        Thread(target=fetch_and_queue, args=(video_id,)).start()
     return jsonify({"url": f"/stream/{video_id}"})
     
 @app.route("/stream/<video_id>")
