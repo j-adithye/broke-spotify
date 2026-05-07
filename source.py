@@ -45,7 +45,7 @@ def get_url(videoId):
         
 def get_similar(video_id):
     playlist = yt.get_watch_playlist(videoId=video_id)
-    recommendations = playlist["tracks"][1:25]
+    recommendations = playlist["tracks"][1:20]
     queue = data_helper(recommendations,thumbnail = 'thumbnail',search=False)
     return queue
 

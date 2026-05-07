@@ -1,9 +1,10 @@
 from flask import Flask,request,jsonify,render_template,redirect,url_for,Response
 import source
-import requests,json
+import requests,json,time
 from threading import Thread
 
 app = Flask(__name__)
+queue = {"tracks": [], "cur_idx": 0}
 
 @app.route("/",methods= ['GET','POST'])
 def home():
@@ -22,14 +23,15 @@ def now_playing():
     data = request.get_json()
     video_id = data['id']
     global queue
-    queue = source.get_similar(video_id)
-    
+    tracks = source.get_similar(video_id)
+    queue['tracks'] = tracks
+    # print(json.dumps(queue,indent=3))
     return jsonify({"url": f"/stream/{video_id}"})
     
 @app.route("/stream/<video_id>")
 def stream(video_id):
     media_url = source.get_url(video_id)
-    print(json.dumps(queue,indent=3))
+    # print(json.dumps(queue,indent=3))
     range_header = request.headers.get('Range')
     
     headers = {
@@ -58,7 +60,34 @@ def stream(video_id):
         headers=response_headers
     )
     
+@app.route('/queue/next', methods=['GET'])
+def next_track():
+    idx = queue['cur_idx']
+    tracks = queue['tracks']
+
+    current = tracks[idx]
+    queue['cur_idx'] += 1
     
+    if idx > 10:
+        queue['tracks'].pop(0)
+        queue['cur_idx'] -= 1
+    
+    if len(queue['tracks']) < 5:
+        new_recs = source.get_recommendations(current['videoId'])
+        queue['tracks'].extend(new_recs)
+        
+    return jsonify(current)
+
+@app.route('/queue/prev', methods=['GET'])
+def prev_track():
+    idx = queue['cur_idx']
+    tracks = queue['tracks']
+    if idx > 0:
+        queue['cur_idx'] -= 1
+        current = tracks[idx-1]
+
+    return jsonify(current)
+
 if __name__ == "__main__":
     try:
         app.run(debug = True)
