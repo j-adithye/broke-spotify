@@ -1,7 +1,62 @@
 {% extends "base.html" %}
-{% block title %}THis is homepage{% endblock %}
 {% block content %}
 
-<h1>Page under development</h1>
-<h2>please search for a song</h2>
+<div class="home-container">
+
+    <section class="home-row">
+        <h2 class="row-title">Recently Played</h2>
+        <div class="row-scroll">
+            {% for song in recent %}
+            <div class="song-card"
+                data-title="{{ song.title }}"
+                data-artist="{{ song.singers }}"
+                data-image="{{ song.image }}"
+                data-videoid="{{ song.videoId }}">
+                <img src="{{ song.image }}" alt="{{ song.title }}">
+                <p class="song-title">{{ song.title }}</p>
+                <p class="song-artist">{{ song.singers }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="home-row">
+        <h2 class="row-title">Recommended</h2>
+        <div class="row-scroll">
+            {% for song in recommended %}
+            <div class="song-card"
+                data-title="{{ song.title }}"
+                data-artist="{{ song.singers }}"
+                data-image="{{ song.image }}"
+                data-videoid="{{ song.videoId }}">
+                <img src="{{ song.image }}" alt="{{ song.title }}">
+                <p class="song-title">{{ song.title }}</p>
+                <p class="song-artist">{{ song.singers }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {% for row in home_rows %}
+    <section class="home-row">
+        <h2 class="row-title">{{ row.title }}</h2>
+        <div class="row-scroll">
+            {% for song in row.contents %}
+            {% if song.videoId %}
+            <div class="song-card"
+                data-title="{{ song.title }}"
+                data-artist="{{ song.singers }}"
+                data-image="{{ song.image }}"
+                data-videoid="{{ song.videoId }}">
+                <img src="{{ song.image }}" alt="{{ song.title }}">
+                <p class="song-title">{{ song.title }}</p>
+                <p class="song-artist">{{ song.singers }}</p>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </section>
+    {% endfor %}
+
+</div>
 {% endblock %}

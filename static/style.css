@@ -13,43 +13,11 @@ body {
 }
 
 .search-bar {
-    padding-left: 230px;
+    padding-left: 30px;
     padding-top: 25px;
     position: relative;
     right: 0;
     top: 0;
-}
-
-
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: -220px;
-    height: 100vh;
-    width: 220px;
-    background: #d33f3f;
-    padding: 60px 20px 20px 20px;
-    transition: transform 0.3s ease;
-    z-index: 50;
-}
-
-.sidebar.expanded {
-    transform: translateX(220px); 
-}
-
-
-
-
-.hamburger {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    z-index: 100;          /* above everything */
-    background: none;
-    border: none;
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
 }
 
 input {
@@ -88,7 +56,7 @@ button {
 }
 
 .song-card {
-    width: 180px;
+    width: 160px;
     background: #e75858;
     padding: 15px;
     border-radius: 8px;
@@ -236,3 +204,46 @@ button {
     color: #aaa;
     margin-top: 2px;
 }
+
+
+.home-container {
+    padding: 20px 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.home-row {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.row-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.row-scroll {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: #e75858 #1a1a1a;
+}
+
+.row-scroll::-webkit-scrollbar {
+    height: 6px;
+}
+
+.row-scroll::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+.row-scroll::-webkit-scrollbar-thumb {
+    background: #e75858;
+    border-radius: 3px;
+}
+

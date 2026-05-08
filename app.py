@@ -1,4 +1,4 @@
-from flask import Flask,request,jsonify,render_template,redirect,url_for,Response
+from flask import Flask,request,jsonify,render_template,Response
 import source
 import requests,json,time
 from threading import Thread
@@ -101,6 +101,9 @@ def prev_track():
     
     return jsonify(current)
 
+@app.route('/test')
+def test():
+    return(source.yt.get_home())
 if __name__ == "__main__":
     try:
         app.run(debug = True)
