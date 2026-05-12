@@ -34,7 +34,7 @@ def data_helper(res,thumbnail='thumbnails',search=True):
         song['image'] = song['image'].replace('w60','w226').replace('h60','h226')
     return res
  
-def get_url(videoId):
+def get_url_fallback(videoId):
     url = "https://www.youtube.com/watch?v="+str(videoId)
     
     ydl_opts = {
@@ -48,11 +48,13 @@ def get_url(videoId):
         print(stream_url)
         return stream_url
 
-def get_url_fallback(video_id):
-    ytf = YouTube(f"https://youtube.com/watch?v={video_id}")
-    stream = ytf.streams.filter(only_audio=True).first()
-    print(stream.url)
-    return stream.url
+def get_url(video_id):
+    try:
+        ytf = YouTube(f"https://youtube.com/watch?v={video_id}")
+        stream = ytf.streams.filter(only_audio=True).first()
+        return stream.url
+    except:
+        return get_url_fallback(video_id)
     
 def get_similar(video_id,limit=20):
     playlist = yt.get_watch_playlist(videoId=video_id)
@@ -76,4 +78,8 @@ def test():
 
 # get_recommended()
 # get_similar('kIft-LUHHVA')
-get_url_fallback('kIft-LUHHVA')
+start = time.perf_counter()
+get_url('kIft-LUHHVA')
+end = time.perf_counter()
+
+print(f"Time taken: {end - start:.6f} seconds")
