@@ -1,6 +1,8 @@
 from ytmusicapi import YTMusic
 import json
-import yt_dlp
+import yt_dlp,random
+import models
+import app as A
 
 yt = YTMusic()
 
@@ -43,11 +45,24 @@ def get_url(videoId):
         stream_url = info["url"]
         return stream_url
         
-def get_similar(video_id):
+def get_similar(video_id,limit=20):
     playlist = yt.get_watch_playlist(videoId=video_id)
-    recommendations = playlist["tracks"][1:20]
+    recommendations = playlist["tracks"][1:limit+1]
     queue = data_helper(recommendations,thumbnail = 'thumbnail',search=False)
+    # print(json.dumps(queue,indent=3))
     return queue
 
+
+def get_recommended():
+    with A.app.app_context():
+        last_3 = models.get_last_3()
+    recommended = []
+    for video_id in last_3:
+        similar = get_similar(video_id,limit=5)
+        recommended.extend(similar)
+    random.shuffle(recommended)
+    return recommended
+    
+# get_recommended()
 # get_similar('kIft-LUHHVA')
 # get_url('kIft-LUHHVA')

@@ -104,10 +104,6 @@ const hamburger = document.getElementById('hamburger');
 const sidebar = document.getElementById('sidebar');
 const songgrid = document.querySelector('.song-grid');
 
-hamburger.addEventListener('click', function() {
-    sidebar.classList.toggle('expanded');
-    songgrid.classList.toggle('resize');
-});
 
 // Open/close queue modal
 queueBtn.addEventListener('click', async function() {

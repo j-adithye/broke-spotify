@@ -2,18 +2,29 @@ from flask import Flask,request,jsonify,render_template,Response
 import source
 import requests,json,time
 from threading import Thread
+import models 
 
 queue = {"tracks": [], "cur_idx": 0}
+db = models.db
 
 def fetch_and_queue(video_id):
+    print(queue)
     tracks = source.get_similar(video_id)
     queue['tracks'].extend(tracks)
+    print(queue)
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///music.db'
+db.init_app(app)
+
+with app.app_context():
+    db.create_all()
 
 @app.route("/",methods= ['GET','POST'])
 def home():
-    return render_template("home.html")
+    recent = models.get_recently_played()
+    recommended = source.get_recommended()
+    return render_template("home.html", recent=recent, recommended=recommended)
 
 @app.route("/result/")
 def result():
@@ -34,6 +45,9 @@ def now_playing():
                     "title": cur_title,
                     "singers": cur_artist,
                     "image": cur_image}
+    
+    models.add_recently_played(video_id, cur_title, cur_artist, cur_image)
+    
     if req_source == 'card':
         queue['tracks'].clear()
         queue['cur_idx'] = 0

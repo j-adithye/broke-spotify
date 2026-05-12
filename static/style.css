@@ -56,7 +56,8 @@ button {
 }
 
 .song-card {
-    width: 160px;
+    width: 200px;   /* add this, change existing width to min-width */
+    flex-shrink: 0;
     background: #e75858;
     padding: 15px;
     border-radius: 8px;
@@ -65,7 +66,9 @@ button {
 
 .song-card img {
     width: 100%;
+    height: 200px;
     border-radius: 4px;
+    object-fit: cover;
 }
 
 .song-title {
