@@ -12,6 +12,18 @@ body {
     padding-bottom: 80px;
 }
 
+.home-icon {
+    color: white;
+    font-size: 28px;
+    text-decoration: none;
+    margin-right: 15px;
+    vertical-align: middle;
+}
+
+.home-icon:hover {
+    color: #e75858;
+}
+
 .search-bar {
     padding-left: 30px;
     padding-top: 25px;
@@ -40,23 +52,17 @@ button {
 }
 
 .song-grid {
-    margin-left: 50px;
+    position: relative;
+    margin-left: 30px;
     display: flex;
     flex-wrap: wrap;
     gap: 25px;
     margin-top: 30px;
     z-index: 50;
-    transition: margin-left 0.3s ease;
-
-}
-
-.song-grid.resize {
-    margin-left: 270px;
-    transition: margin-left 0.3s ease;
 }
 
 .song-card {
-    width: 200px;   /* add this, change existing width to min-width */
+    width: 180px;   /* add this, change existing width to min-width */
     flex-shrink: 0;
     background: #e75858;
     padding: 15px;

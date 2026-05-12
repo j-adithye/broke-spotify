@@ -15,7 +15,24 @@ const queueBtn = document.getElementById('queue-btn');
 const closeQueueBtn = document.getElementById('close-queue-btn');
 const queueModal = document.getElementById('queue-modal');
 const queueList = document.getElementById('queue-list');
+const searchForm = document.querySelector('.search-bar form');
 
+
+searchForm.addEventListener('submit', async function(e) {
+    e.preventDefault();  // stop full reload
+    
+    const query = document.querySelector('.search-bar input').value;
+    const res = await fetch(`/result/?query=${encodeURIComponent(query)}`);
+    const html = await res.text();
+    
+    // parse the response and extract just the content block
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');    
+    const newContent = doc.querySelector('#main-content');
+    document.getElementById('main-content').replaceWith(newContent);    
+    // re-attach click listeners to new cards
+    attachCardListeners();
+});
 
 async function playSong(videoId, title, artist, image, source= 'queue') {
     playerTitle.textContent = title;
@@ -34,13 +51,16 @@ async function playSong(videoId, title, artist, image, source= 'queue') {
     audioPlayer.oncanplay = () => audioPlayer.play();
 }
 
-// Step B — Detect clicks on any song card
-document.querySelectorAll('.song-card').forEach(function(card) {
-    card.addEventListener('click', async function() {
-    const { title, artist, image, videoid } = card.dataset;
-    await playSong(videoid, title, artist, image, 'card');
+function attachCardListeners() {
+    document.querySelectorAll('.song-card').forEach(function(card) {
+        card.addEventListener('click', async function() {
+            const { title, artist, image, videoid } = card.dataset;
+            await playSong(videoid, title, artist, image, 'card');
+        });
     });
-});
+}
+document.getElementById('main-content').replaceWith(newContent);
+attachCardListeners();
 
 // Step C — Play/Pause button
 playPauseBtn.addEventListener('click', function() {
@@ -98,10 +118,7 @@ prevBtn.addEventListener('click', async function() {
     const song = await res.json();
     await playSong(song.videoId, song.title, song.singers, song.image);
 });
-// hamburger
 
-const hamburger = document.getElementById('hamburger');
-const sidebar = document.getElementById('sidebar');
 const songgrid = document.querySelector('.song-grid');
 
 

@@ -8,7 +8,9 @@
 </head>
 <body>
 
+    
 <div class="search-bar">
+    <a href="/" class="home-icon">&#8962;</a>
         <form action="/result/" method="GET">
             <input type="text" name="query" placeholder="Search songs...">
             <button type="submit">Search</button>
@@ -44,8 +46,9 @@
 </div>
 
 <audio id="audio-player"></audio>
+<div id="main-content">
     {% block content %}{% endblock %}
-
+</div>
 
 <script src="{{ url_for('static', filename='main.js') }}"></script>
 </body>
