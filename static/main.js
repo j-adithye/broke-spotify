@@ -20,7 +20,7 @@ const searchForm = document.querySelector('.search-bar form');
 
 searchForm.addEventListener('submit', async function(e) {
     e.preventDefault();  // stop full reload
-    
+    document.getElementById('main-content').innerHTML = '<div class="loader-container"><div class="loader"></div></div>';
     const query = document.querySelector('.search-bar input').value;
     const res = await fetch(`/result/?query=${encodeURIComponent(query)}`);
     const html = await res.text();
@@ -36,7 +36,7 @@ searchForm.addEventListener('submit', async function(e) {
 
 document.querySelector('.home-icon').addEventListener('click', async function(e) {
     e.preventDefault();  // stop navigation
-    
+    document.getElementById('main-content').innerHTML = '<div class="loader-container"><div class="loader"></div></div>';
     const res = await fetch('/');
     const html = await res.text();
     
