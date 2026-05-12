@@ -34,6 +34,20 @@ searchForm.addEventListener('submit', async function(e) {
     attachCardListeners();
 });
 
+document.querySelector('.home-icon').addEventListener('click', async function(e) {
+    e.preventDefault();  // stop navigation
+    
+    const res = await fetch('/');
+    const html = await res.text();
+    
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const newContent = doc.querySelector('#main-content');
+    
+    document.getElementById('main-content').replaceWith(newContent);
+    attachCardListeners();
+});
+
 async function playSong(videoId, title, artist, image, source= 'queue') {
     playerTitle.textContent = title;
     playerArtist.textContent = artist;
@@ -59,7 +73,6 @@ function attachCardListeners() {
         });
     });
 }
-document.getElementById('main-content').replaceWith(newContent);
 attachCardListeners();
 
 // Step C — Play/Pause button

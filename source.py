@@ -1,5 +1,6 @@
 from ytmusicapi import YTMusic
-import json
+from pytubefix import YouTube
+import json,time
 import yt_dlp,random
 import models
 import app as A
@@ -44,8 +45,15 @@ def get_url(videoId):
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=False)
         stream_url = info["url"]
+        print(stream_url)
         return stream_url
-        
+
+def get_url_fallback(video_id):
+    ytf = YouTube(f"https://youtube.com/watch?v={video_id}")
+    stream = ytf.streams.filter(only_audio=True).first()
+    print(stream.url)
+    return stream.url
+    
 def get_similar(video_id,limit=20):
     playlist = yt.get_watch_playlist(videoId=video_id)
     recommendations = playlist["tracks"][1:limit+1]
@@ -68,4 +76,4 @@ def test():
 
 # get_recommended()
 # get_similar('kIft-LUHHVA')
-# get_url('kIft-LUHHVA')
+get_url_fallback('kIft-LUHHVA')
