@@ -18,7 +18,7 @@ def data_helper(res,thumbnail='thumbnails',search=True):
         for singer in song['artists']:
             singers = singers+singer['name']+','
         song['singers'] = singers[:-1]
-        song['image'] = song[thumbnail][1]['url']
+        song['image'] = song[thumbnail][0]['url']
         if search:
             keys_to_remove = [thumbnail,'artists','views','category','resultType','album','inLibrary',
                               'pinnedToListenAgain','videoType','duration','year','duration_seconds','isExplicit']
@@ -30,6 +30,7 @@ def data_helper(res,thumbnail='thumbnails',search=True):
             for key in keys_to_remove:
                 song.pop(key, None)
             
+        song['image'] = song['image'].replace('w60','w226').replace('h60','h226')
     return res
  
 def get_url(videoId):
@@ -48,21 +49,23 @@ def get_url(videoId):
 def get_similar(video_id,limit=20):
     playlist = yt.get_watch_playlist(videoId=video_id)
     recommendations = playlist["tracks"][1:limit+1]
-    queue = data_helper(recommendations,thumbnail = 'thumbnail',search=False)
+    queue = data_helper(recommendations,thumbnail = 'thumbnail',search=False)   #return 'thumbnail' instead of 'thumbnails' like in search
     # print(json.dumps(queue,indent=3))
     return queue
 
 
 def get_recommended():
-    with A.app.app_context():
-        last_3 = models.get_last_3()
+    last_few = models.get_last_few()
     recommended = []
-    for video_id in last_3:
+    for video_id in last_few:
         similar = get_similar(video_id,limit=5)
         recommended.extend(similar)
     random.shuffle(recommended)
     return recommended
-    
+
+def test():
+    return yt.get_playlist('RDCLAK5uy_nOL3sMa95sycDZS17ES7eyQy8x2nV9ET8')
+
 # get_recommended()
 # get_similar('kIft-LUHHVA')
 # get_url('kIft-LUHHVA')

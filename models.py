@@ -37,7 +37,7 @@ def get_recently_played(limit=15):        #15 thalkalam
     return [{"videoId": r.videoId, "title": r.title,
              "singers": r.singers, "image": r.image} for r in rows]
     
-def get_last_3():
+def get_last_few():
     rows = RecentlyPlayed.query\
         .order_by(RecentlyPlayed.id.desc())\
         .limit(3).all()

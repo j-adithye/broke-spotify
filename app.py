@@ -8,10 +8,8 @@ queue = {"tracks": [], "cur_idx": 0}
 db = models.db
 
 def fetch_and_queue(video_id):
-    print(queue)
     tracks = source.get_similar(video_id)
     queue['tracks'].extend(tracks)
-    print(queue)
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///music.db'
@@ -117,7 +115,7 @@ def prev_track():
 
 @app.route('/test')
 def test():
-    return(source.yt.get_home())
+    return(source.test())
 if __name__ == "__main__":
     try:
         app.run(debug = True)

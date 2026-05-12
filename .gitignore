@@ -2,3 +2,4 @@ dislike-spotify
 __pycache__
 .env
 instance
+music.db
