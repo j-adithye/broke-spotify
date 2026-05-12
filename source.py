@@ -1,5 +1,5 @@
 from ytmusicapi import YTMusic
-from pytubefix import YouTube
+from pytubefix import YouTube,exceptions
 import json,time
 import yt_dlp,random
 import models
@@ -34,6 +34,15 @@ def data_helper(res,thumbnail='thumbnails',search=True):
         song['image'] = song['image'].replace('w60','w226').replace('h60','h226')
     return res
  
+
+def get_url(video_id):
+    try:
+        ytf = YouTube(f"https://youtube.com/watch?v={video_id}")
+        stream = ytf.streams.filter(only_audio=True).first()
+        return stream.url
+    except (exceptions.PytubeFixError,AttributeError):
+        return get_url_fallback(video_id)
+    
 def get_url_fallback(videoId):
     url = "https://www.youtube.com/watch?v="+str(videoId)
     
@@ -47,14 +56,6 @@ def get_url_fallback(videoId):
         stream_url = info["url"]
         print(stream_url)
         return stream_url
-
-def get_url(video_id):
-    try:
-        ytf = YouTube(f"https://youtube.com/watch?v={video_id}")
-        stream = ytf.streams.filter(only_audio=True).first()
-        return stream.url
-    except:
-        return get_url_fallback(video_id)
     
 def get_similar(video_id,limit=20):
     playlist = yt.get_watch_playlist(videoId=video_id)
