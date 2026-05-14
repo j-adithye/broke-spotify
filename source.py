@@ -80,7 +80,7 @@ def test():
 
 # get_recommended()
 # get_similar('kIft-LUHHVA')
-# get_url('kIft-LUHHVA')
+# print(get_url('kIft-LUHHVA'))
 # end = time.perf_counter()
 
 # print(f"Time taken: {end - start:.6f} seconds")

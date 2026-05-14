@@ -55,7 +55,7 @@ def now_playing():
     
 @app.route("/stream/<video_id>")
 def stream(video_id):
-    media_url = source.get_url(video_id)
+    media_url = models.get_cache_url(video_id)
     # print(json.dumps(queue,indent=3))
     range_header = request.headers.get('Range')
     
