@@ -3,7 +3,6 @@ from pytubefix import YouTube,exceptions
 import json,time
 import yt_dlp,random
 import models
-import app as A
 
 yt = YTMusic()
 
@@ -38,13 +37,13 @@ def data_helper(res,thumbnail='thumbnails',search=True):
 def get_url(video_id):
     try:
         ytf = YouTube(f"https://youtube.com/watch?v={video_id}")
-        stream = ytf.streams.filter(only_audio=True).first()
+        stream = ytf.streams.filter(only_audio=True).order_by('abr').last()
         return stream.url
     except (exceptions.PytubeFixError,AttributeError):
         return get_url_fallback(video_id)
     
 def get_url_fallback(videoId):
-    url = "https://www.youtube.com/watch?v="+str(videoId)
+    url = f"https://www.youtube.com/watch?v={videoId}"
     
     ydl_opts = {
         "format": "bestaudio",
@@ -77,10 +76,11 @@ def get_recommended():
 def test():
     return yt.get_playlist('RDCLAK5uy_nOL3sMa95sycDZS17ES7eyQy8x2nV9ET8')
 
+# start = time.perf_counter()
+
 # get_recommended()
 # get_similar('kIft-LUHHVA')
-start = time.perf_counter()
-get_url('kIft-LUHHVA')
-end = time.perf_counter()
+# get_url('kIft-LUHHVA')
+# end = time.perf_counter()
 
-print(f"Time taken: {end - start:.6f} seconds")
+# print(f"Time taken: {end - start:.6f} seconds")
