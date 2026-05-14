@@ -78,7 +78,7 @@ def stream(video_id):
         response_headers['Content-Length'] = req.headers['Content-Length']
     
     status = 206 if range_header else 200
-    print(request.headers.get('Range'))
+
     return Response(
         req.iter_content(chunk_size=32768),
         status=status,
@@ -93,14 +93,21 @@ def get_queue():
 def next_track():
     idx = queue['cur_idx']
     tracks = queue['tracks']
-
-    if len(queue['tracks']) < 5:
-        print('sanam')
-        new_recs = source.get_similar(current['videoId'])
-        queue['tracks'].extend(new_recs)
+    
+    if idx >= 10:
+        queue['tracks'].pop(0)
+        queue['cur_idx'] -= 1
+        print('done......................................................',queue['cur_idx'])
+        print('len',len(queue['tracks']))
         
     queue['cur_idx'] += 1
     current = tracks[queue['cur_idx']]
+    
+    if len(queue['tracks']) < 15:
+        print('set######################################################')
+        new_recs = source.get_similar(current['videoId'])
+        queue['tracks'].extend(new_recs)
+        
     
     if idx > 10:
         queue['tracks'].pop(0)
