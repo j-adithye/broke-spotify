@@ -171,3 +171,40 @@ async function refreshQueue() {
     const nowPlaying = queueList.querySelector('.now-playing');
     if (nowPlaying) nowPlaying.scrollIntoView({ block: 'center' });
 }
+
+document.addEventListener('keydown', function(e) {
+
+    if (document.activeElement.tagName === 'INPUT') return;
+    // prevent default scrolling behavior for space/arrows
+    if (['Space', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
+        e.preventDefault();
+    }
+
+    switch(e.code) {
+        case 'Space':
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+                playPauseBtn.innerHTML = '&#9646;&#9646;';
+            } else {
+                audioPlayer.pause();
+                playPauseBtn.innerHTML = '&#9654;';
+            }
+            break;
+
+        case 'ArrowLeft':
+            audioPlayer.currentTime = Math.max(0, audioPlayer.currentTime - 5);
+            break;
+
+        case 'ArrowRight':
+            audioPlayer.currentTime = Math.min(audioPlayer.duration, audioPlayer.currentTime + 5);
+            break;
+
+        case 'Comma':  // ,
+            prevBtn.click();
+            break;
+
+        case 'Period':  // .
+            nextBtn.click();
+            break;
+    }
+});

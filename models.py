@@ -15,11 +15,9 @@ def add_recently_played(videoId, title, singers, image):
     existing = RecentlyPlayed.query.filter_by(videoId=videoId).first()
     if existing:
         db.session.delete(existing)
-        db.session.commit()
-    else:
-        entry = RecentlyPlayed(videoId=videoId, title=title, singers=singers, image=image)
-        db.session.add(entry)
-        db.session.commit()
+    entry = RecentlyPlayed(videoId=videoId, title=title, singers=singers, image=image)
+    db.session.add(entry)
+    db.session.commit()
         
     total = RecentlyPlayed.query.count()      
     if total > 50:   #ippo 50 mathi
@@ -61,7 +59,7 @@ def get_cache_url(videoId):
                 cache.url = new_url
                 cache.timeStamp = datetime.now()
                 db.session.commit()
-                return 
+                return new_url
             else:
                 return cache.url
         else:

@@ -78,9 +78,9 @@ def stream(video_id):
         response_headers['Content-Length'] = req.headers['Content-Length']
     
     status = 206 if range_header else 200
-    
+    print(request.headers.get('Range'))
     return Response(
-        req.iter_content(chunk_size=4096),
+        req.iter_content(chunk_size=32768),
         status=status,
         headers=response_headers
     )
@@ -91,7 +91,6 @@ def get_queue():
  
 @app.route('/queue/next', methods=['GET'])
 def next_track():
-    print(json.dumps(queue,indent=3))
     idx = queue['cur_idx']
     tracks = queue['tracks']
 
