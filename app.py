@@ -94,6 +94,11 @@ def next_track():
     idx = queue['cur_idx']
     tracks = queue['tracks']
 
+    if len(queue['tracks']) < 5:
+        print('sanam')
+        new_recs = source.get_similar(current['videoId'])
+        queue['tracks'].extend(new_recs)
+        
     queue['cur_idx'] += 1
     current = tracks[queue['cur_idx']]
     
@@ -101,10 +106,6 @@ def next_track():
         queue['tracks'].pop(0)
         queue['cur_idx'] -= 1
     
-    if len(queue['tracks']) < 5:
-        new_recs = source.get_similar(current['videoId'])
-        queue['tracks'].extend(new_recs)
-        
     return jsonify(current)
 
 @app.route('/queue/prev', methods=['GET'])
