@@ -55,8 +55,12 @@ def now_playing():
     
 @app.route("/stream/<video_id>")
 def stream(video_id):
+    # start = time.perf_counter()
     media_url = models.get_cache_url(video_id)
-    # print(json.dumps(queue,indent=3))
+    
+    # end = time.perf_counter()
+    # print(f"Time taken: {end - start:.6f} seconds")
+    
     range_header = request.headers.get('Range')
     
     headers = {"User-Agent": "Mozilla/5.0",}

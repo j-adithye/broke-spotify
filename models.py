@@ -50,17 +50,18 @@ class CacheUrl(db.Model):
     timeStamp = db.Column(db.String, default=datetime.now)
     
 def get_cache_url(videoId):
-        existing = CacheUrl.query.filter_by(videoId=videoId).first()
+        cache = CacheUrl.query.filter_by(videoId=videoId).first()
         
-        if existing:
-            cache = CacheUrl.query\
-                .filter_by(videoId=videoId)\
-                .first()
+        if cache:
             timestamp = datetime.strptime(
                 cache.timeStamp,
                 "%Y-%m-%d %H:%M:%S.%f")
             if (datetime.now() - timestamp) > timedelta(hours=4):               #4hrs
-                return source.get_url(videoId)
+                new_url = source.get_url(videoId)
+                cache.url = new_url
+                cache.timeStamp = datetime.now()
+                db.session.commit()
+                return 
             else:
                 return cache.url
         else:
@@ -68,5 +69,14 @@ def get_cache_url(videoId):
             entry = CacheUrl(videoId=videoId, url=url)
             db.session.add(entry)
             db.session.commit()
+            
+            total = CacheUrl.query.count()      
+            if total > 50:   #ippo 50 mathi
+                oldest = CacheUrl.query\
+                    .order_by(CacheUrl.id.asc())\
+                    .limit(total - 50).all()
+                for row in oldest:
+                    db.session.delete(row)
+                db.session.commit()
             return url
         
