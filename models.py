@@ -51,9 +51,7 @@ def get_cache_url(videoId):
         cache = CacheUrl.query.filter_by(videoId=videoId).first()
         
         if cache:
-            timestamp = datetime.strptime(
-                cache.timeStamp,
-                "%Y-%m-%d %H:%M:%S.%f")
+            timestamp = cache.timeStamp
             if (datetime.now() - timestamp) > timedelta(hours=4):               #4hrs
                 new_url = source.get_url(videoId)
                 cache.url = new_url

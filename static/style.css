@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
 
 *, *::before, *::after {
     margin: 0;
@@ -28,8 +28,8 @@
     --shadow-up:     0 -3px 0px #2B3A5C;
     --shadow-down:   0 3px 0px #2B3A5C;
 
-    --font:          'Syne', sans-serif;
-    --font-mono:     'IBM Plex Mono', monospace;
+    --font:          -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono:     'Courier New', Courier, monospace;
 
     --topbar-h:      62px;
     --player-h:      88px;
