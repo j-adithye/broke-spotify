@@ -1,6 +1,6 @@
 from flask import Flask,request,jsonify,render_template,Response
 import source
-import requests,json,time,os
+import requests,json,time
 from threading import Thread
 import models 
 
@@ -12,8 +12,7 @@ def fetch_and_queue(video_id):
     queue['tracks'].extend(tracks)
 
 app = Flask(__name__)
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(BASE_DIR, 'instance/music.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///music.db'
 db.init_app(app)
 
 with app.app_context():
@@ -98,11 +97,14 @@ def next_track():
     if idx >= 10:
         queue['tracks'].pop(0)
         queue['cur_idx'] -= 1
- 
+        print('done......................................................',queue['cur_idx'])
+        print('len',len(queue['tracks']))
+        
     queue['cur_idx'] += 1
     current = tracks[queue['cur_idx']]
     
     if len(queue['tracks']) < 15:
+        print('set######################################################')
         new_recs = source.get_similar(current['videoId'])
         queue['tracks'].extend(new_recs)
         
@@ -122,9 +124,9 @@ def prev_track():
     
     return jsonify(current)
 
-# @app.route('/test')
-# def test():
-#     return(source.test())
+@app.route('/test')
+def test():
+    return(source.test())
 
 if __name__ == "__main__":
     try:
