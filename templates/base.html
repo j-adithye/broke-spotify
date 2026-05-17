@@ -53,9 +53,21 @@
         </div>
 
         <div class="player-controls">
+            <button id="queue-btn" class="icon-btn" aria-label="Queue">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+                    <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+                    <circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/>
+                </svg>
+            </button>
             <button id="prev-btn" aria-label="Previous">&#9664;&#9664;</button>
             <button id="play-pause-btn" class="play-btn" aria-label="Play">&#9654;</button>
             <button id="next-btn" aria-label="Next">&#9654;&#9654;</button>
+            <button id="repeat-btn" class="icon-btn" aria-label="Repeat">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+                    <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+                    <polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+                </svg>
+            </button>
         </div>
 
         <button class="icon-btn mobile-queue-btn" id="mobile-queue-btn" aria-label="Queue" style="display:none">
@@ -78,14 +90,8 @@
                 </svg>
             </button>
             <input type="range" id="volume-bar" value="100" min="0" max="100" aria-label="Volume">
-            <button id="queue-btn" class="icon-btn" aria-label="Queue">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
-                    <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
-                    <circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/>
-                </svg>
-            </button>
         </div>
-    </div>
+    </div><!-- /.player-top -->
 
     <div class="player-bottom">
         <span id="current-time" class="time-mono">0:00</span>
@@ -103,6 +109,71 @@
 </div>
 
 <audio id="audio-player"></audio>
+
+<!-- ── MOBILE FULL-SCREEN PLAYER ── -->
+<div id="mobile-player" class="mobile-player hidden" aria-modal="true" role="dialog">
+    <div class="mp-handle-bar">
+        <div class="mp-handle"></div>
+    </div>
+
+    <div class="mp-art-wrap">
+        <img id="mp-image" src="" alt="">
+    </div>
+
+    <div class="mp-meta">
+        <div class="mp-text">
+            <p id="mp-title">No song playing</p>
+            <p id="mp-artist"></p>
+        </div>
+    </div>
+
+    <div class="mp-seek-wrap">
+        <input type="range" id="mp-seek-bar" value="0" min="0" max="100" aria-label="Seek">
+        <div class="mp-times">
+            <span id="mp-current-time" class="time-mono">0:00</span>
+            <span id="mp-duration" class="time-mono">0:00</span>
+        </div>
+    </div>
+
+    <!-- inline queue panel -->
+    <div id="mp-queue-panel" class="mp-queue-panel hidden">
+        <div class="mp-queue-panel-header">
+            <span>Up Next</span>
+            <button id="mp-close-queue-btn" aria-label="Close queue">&times;</button>
+        </div>
+        <div id="mp-queue-list" class="mp-queue-list"></div>
+    </div>
+
+    <div class="mp-controls">
+        <button id="mp-queue-btn" class="mp-icon-btn" aria-label="Queue">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+                <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+                <circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/>
+            </svg>
+        </button>
+        <button id="mp-prev-btn" class="mp-icon-btn" aria-label="Previous">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/>
+            </svg>
+        </button>
+        <button id="mp-play-pause-btn" class="mp-play-btn" aria-label="Play">
+            <svg id="mp-icon-play" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <svg id="mp-icon-pause" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </button>
+        <button id="mp-next-btn" class="mp-icon-btn" aria-label="Next">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 18l8.5-6L6 6v12zm2.5-6 5.5 3.9V8.1L8.5 12zM16 6h2v12h-2z"/>
+            </svg>
+        </button>
+        <button id="mp-repeat-btn" class="mp-icon-btn" aria-label="Repeat">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+                <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+                <polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+            </svg>
+        </button>
+    </div>
+</div>
+<div id="mp-backdrop" class="mp-backdrop hidden"></div>
 
 <div id="main-content">
     {% block content %}{% endblock %}

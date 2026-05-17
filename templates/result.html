@@ -5,13 +5,6 @@
 {% block content %}
 <div class="results-header">
     <p class="results-eyebrow">Search Results</p>
-    <h2 class="results-title">
-        {% if songs %}
-            {{ songs|length }} track{% if songs|length != 1 %}s{% endif %} found
-        {% else %}
-            No results found
-        {% endif %}
-    </h2>
 </div>
 
 <div class="song-grid" id="song-grid">

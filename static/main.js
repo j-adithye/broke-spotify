@@ -18,6 +18,10 @@ const muteBtn       = document.getElementById('mute-btn');
 const volumeBar     = document.getElementById('volume-bar');
 const themeToggle   = document.getElementById('theme-toggle');
 
+// ── STATE ──
+let repeatOn  = false;
+let mpOpen    = false;
+
 // ── THEME ──
 function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
@@ -109,6 +113,9 @@ async function playSong(videoId, title, artist, image, source = 'queue') {
     playerImage.src          = image;
     playPauseBtn.innerHTML   = '&#9646;&#9646;';
 
+    // sync mobile player immediately with new metadata (don't wait for fetch)
+    if (mpOpen) syncMobilePlayer();
+
     const res        = await fetch('/now-playing', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -169,17 +176,14 @@ function formatTime(seconds) {
 }
 
 // ── QUEUE NAVIGATION ──
-audioPlayer.addEventListener('ended', async function () {
+async function playNext() {
     const res  = await fetch('/queue/next');
     const song = await res.json();
     await playSong(song.videoId, song.title, song.singers, song.image);
-});
+}
 
-nextBtn.addEventListener('click', async function () {
-    const res  = await fetch('/queue/next');
-    const song = await res.json();
-    await playSong(song.videoId, song.title, song.singers, song.image);
-});
+audioPlayer.addEventListener('ended', playNext);
+nextBtn.addEventListener('click', playNext);
 
 prevBtn.addEventListener('click', async function () {
     const res  = await fetch('/queue/prev');
@@ -262,6 +266,145 @@ playerBar.addEventListener('touchend', async function (e) {
     }
     swipeStartX = null;
 }, { passive: true });
+
+// ── MOBILE FULL-SCREEN PLAYER ──
+const mobilePlayer    = document.getElementById('mobile-player');
+const mpBackdrop      = document.getElementById('mp-backdrop');
+const mpImage         = document.getElementById('mp-image');
+const mpTitle         = document.getElementById('mp-title');
+const mpArtist        = document.getElementById('mp-artist');
+const mpSeekBar       = document.getElementById('mp-seek-bar');
+const mpCurrentTime   = document.getElementById('mp-current-time');
+const mpDuration      = document.getElementById('mp-duration');
+const mpPlayPauseBtn  = document.getElementById('mp-play-pause-btn');
+const mpIconPlay      = document.getElementById('mp-icon-play');
+const mpIconPause     = document.getElementById('mp-icon-pause');
+const mpPrevBtn       = document.getElementById('mp-prev-btn');
+const mpNextBtn       = document.getElementById('mp-next-btn');
+const mpQueueBtn       = document.getElementById('mp-queue-btn');
+const mpQueuePanel     = document.getElementById('mp-queue-panel');
+const mpCloseQueueBtn  = document.getElementById('mp-close-queue-btn');
+const mpQueueList      = document.getElementById('mp-queue-list');
+const mpShuffleBtn     = null; // removed
+const mpRepeatBtn     = document.getElementById('mp-repeat-btn');
+const repeatBtn       = document.getElementById('repeat-btn');
+const mpHandleBar     = document.querySelector('.mp-handle-bar');
+
+let mpTouchStartY  = null;
+
+function openMobilePlayer() {
+    mobilePlayer.classList.remove('hidden');
+    mpBackdrop.classList.remove('hidden');
+    mpOpen = true;
+    syncMobilePlayer();
+}
+function closeMobilePlayer() {
+    mobilePlayer.classList.add('hidden');
+    mpBackdrop.classList.add('hidden');
+    mpQueuePanel.classList.add('hidden');
+    mpOpen = false;
+}
+function syncMobilePlayer() {
+    mpImage.src              = playerImage.src;
+    mpTitle.textContent      = playerTitle.textContent;
+    mpArtist.textContent     = playerArtist.textContent;
+    mpSeekBar.value          = seekBar.value;
+    mpCurrentTime.textContent = currentTimeEl.textContent;
+    mpDuration.textContent    = durationEl.textContent;
+    updateRangeFill(mpSeekBar, Number(mpSeekBar.value));
+    const paused = audioPlayer.paused;
+    mpIconPlay.style.display  = paused ? 'block' : 'none';
+    mpIconPause.style.display = paused ? 'none'  : 'block';
+}
+
+// tap player bar (not its buttons) → open
+document.querySelector('.player-bar').addEventListener('click', function(e) {
+    if (window.innerWidth > 640) return;
+    if (e.target.closest('#play-pause-btn') || e.target.closest('#mobile-queue-btn')) return;
+    openMobilePlayer();
+});
+
+// close
+mpBackdrop.addEventListener('click', closeMobilePlayer);
+mpHandleBar.addEventListener('click', closeMobilePlayer);
+
+// swipe down to close
+mobilePlayer.addEventListener('touchstart', function(e) {
+    mpTouchStartY = e.touches[0].clientY;
+}, { passive: true });
+mobilePlayer.addEventListener('touchend', function(e) {
+    if (mpTouchStartY === null) return;
+    const dy = e.changedTouches[0].clientY - mpTouchStartY;
+    if (dy > 60) closeMobilePlayer();
+    mpTouchStartY = null;
+}, { passive: true });
+
+// mp controls mirror main player
+mpPlayPauseBtn.addEventListener('click', function() {
+    playPauseBtn.click();
+    const paused = audioPlayer.paused;
+    mpIconPlay.style.display  = paused ? 'block' : 'none';
+    mpIconPause.style.display = paused ? 'none'  : 'block';
+});
+mpPrevBtn.addEventListener('click', function() { prevBtn.click(); });
+mpNextBtn.addEventListener('click', playNext);
+
+mpSeekBar.addEventListener('input', function() {
+    seekBar.value = mpSeekBar.value;
+    audioPlayer.currentTime = (mpSeekBar.value / 100) * audioPlayer.duration;
+    updateRangeFill(mpSeekBar, Number(mpSeekBar.value));
+});
+
+// mp queue panel
+mpQueueBtn.addEventListener('click', async function() {
+    mpQueuePanel.classList.remove('hidden');
+    const res  = await fetch('/queue');
+    const data = await res.json();
+    mpQueueList.innerHTML = '';
+    data.tracks.forEach(function(song, i) {
+        const item = document.createElement('div');
+        item.className = 'mp-queue-item' + (i === data.cur_idx ? ' now-playing' : '');
+        item.innerHTML = `
+            <img src="${song.image}" alt="${song.title}">
+            <div class="mp-queue-item-info">
+                <p class="mp-queue-item-title">${song.title}</p>
+                <p class="mp-queue-item-artist">${song.singers}</p>
+            </div>
+            ${i === data.cur_idx ? '<span class="mp-queue-now-label">NOW</span>' : ''}
+        `;
+        mpQueueList.appendChild(item);
+    });
+    const nowPlaying = mpQueueList.querySelector('.now-playing');
+    if (nowPlaying) nowPlaying.scrollIntoView({ block: 'center' });
+});
+mpCloseQueueBtn.addEventListener('click', function() {
+    mpQueuePanel.classList.add('hidden');
+});
+repeatBtn.addEventListener('click', function() {
+    repeatOn = !repeatOn;
+    repeatBtn.classList.toggle('active', repeatOn);
+    mpRepeatBtn.classList.toggle('active', repeatOn);
+    audioPlayer.loop = repeatOn;
+});
+
+// keep mp in sync with audio events
+audioPlayer.addEventListener('timeupdate', function() {
+    if (!mpOpen) return;
+    mpSeekBar.value = seekBar.value;
+    mpCurrentTime.textContent = currentTimeEl.textContent;
+    mpDuration.textContent    = durationEl.textContent;
+    updateRangeFill(mpSeekBar, Number(mpSeekBar.value));
+});
+audioPlayer.addEventListener('play', function() {
+    if (!mpOpen) return;
+    mpIconPlay.style.display  = 'none';
+    mpIconPause.style.display = 'block';
+});
+audioPlayer.addEventListener('pause', function() {
+    if (!mpOpen) return;
+    mpIconPlay.style.display  = 'block';
+    mpIconPause.style.display = 'none';
+});
 document.addEventListener('keydown', function (e) {
     if (document.activeElement.tagName === 'INPUT') return;
     if (['Space', 'ArrowLeft', 'ArrowRight'].includes(e.code)) e.preventDefault();
@@ -286,7 +429,7 @@ document.addEventListener('keydown', function (e) {
             prevBtn.click();
             break;
         case 'Period':  // .
-            nextBtn.click();
+            playNext();
             break;
     }
 });
